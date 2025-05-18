@@ -14,6 +14,13 @@ if [ ! -f ./.env ]; then
     exit
 fi
 
+# Install dependencies
+if ! dpkg -l dialog >/dev/null 2>&1 ; then
+  echo "Installing dependencies..."
+	apt update
+	apt install dialog -y || echo "Installation failed" && exit -1
+fi
+
 
 HEIGHT=15
 WIDTH=40
