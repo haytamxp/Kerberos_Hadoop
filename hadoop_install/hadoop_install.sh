@@ -2,7 +2,6 @@
 # AUTHOR : GRAOUI ABDERRAHMANE
 # User named hadoopadmin created via the hadoopusr_setup.sh is expected to exist beforehand
 
-
 # Source variables from .env file
 source .env
 
@@ -13,10 +12,10 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 # Install dependencies
-if [[ ! dpkg -l wget sha512sum openjdk-8-jre ssh pdsh >/dev/null 2>&1 ]] then;
+if ! dpkg -l wget coreutils openjdk-8-jre ssh pdsh >/dev/null 2>&1 ; then
 	apt update
-	apt install wget sha512sum openjdk-8-jre ssh pdsh -y || echo "Installation failed" && exit
-
+	apt install wget coreutils openjdk-8-jre ssh pdsh -y || echo "Installation failed" && exit -1
+fi
 # Setup installation directories
 mkdir -p $HADOOPUSRHOME/$INSTALLDIR
 cd $HADOOPUSRHOME/$INSTALLDIR
@@ -31,7 +30,7 @@ if sha512sum -c $SHA512 $HADOOPTAR; then
 	echo 'Hash is valid'
 else
 	echo 'Hash is invalid'
-	exit
+	exit -1
 fi
 
 # Extract Hadoop

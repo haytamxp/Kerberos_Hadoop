@@ -14,20 +14,39 @@ if [ ! -f ./.env ]; then
     exit
 fi
 
-echo "Select if you are installing the Master Node or a Data Node :\n  [1] Master Node\n  [2] Data Node\n  [0] Exit\nSelection : "
-read mode
-case mode in 
+
+HEIGHT=15
+WIDTH=40
+CHOICE_HEIGHT=4
+BACKTITLE="Apache Hadoop Install script"
+TITLE="Main Menu"
+MENU="What would you like to install on this machine?"
+
+OPTIONS=(1 "MasterNode"
+         2 "DataNode"
+         3 "Exit")
+
+CHOICE=$(dialog --clear \
+                --backtitle "$BACKTITLE" \
+                --title "$TITLE" \
+                --menu "$MENU" \
+                $HEIGHT $WIDTH $CHOICE_HEIGHT \
+                "${OPTIONS[@]}" \
+                2>&1 >/dev/tty)
+
+clear
+case $CHOICE in 
   1)
     echo "Installing for MasterNode..."
-    sh hadoopusr_setup.sh && sh hadoop_install.sh && sh nn_rm_config.sh
+    bash ./hadoopusr_setup.sh && bash ./hadoop_install.sh && bash ./nn_rm_config.sh
     ;;
 
   2)
     echo "Installing for DataNode..."
-    sh hadoopusr_setup.sh && sh hadoop_install.sh && sh dn_nm_config.sh
+    bash ./hadoopusr_setup.sh && bash ./hadoop_install.sh && bash ./dn_nm_config.sh
     ;;
-  
+  3)
+    echo "Exiting..."
+    exit
+    ;;
 esac
-
-echo "Exiting..."
-exit

@@ -8,12 +8,12 @@ source .env
 
 WORKINGDIR=$HADOOPUSRHOME/$INSTALLDIR/etc/hadoop
 
-cat << $WORKINGDIR/hadoop-env.sh >> EOF
+cat << EOF >> "$WORKINGDIR/hadoop-env.sh"
 export HDFS_DATANODE_OPTS="-XX:+UseParallelGC -Xmx512m"
 export HADOOP_PID_DIR=$HADOOPUSRHOME/$INSTALLDIR/runtime/proc
 export HADOOP_LOG_DIR=$HADOOPUSRHOME/$INSTALLDIR/runtime/log
 EOF
 
-echo 'export YARN_NODEMANAGER_OPTS="-Xmx256m" ' >> $WORKINGDIR/yarn-env.sh
+echo 'export YARN_NODEMANAGER_OPTS="-Xmx256m"' >> "$WORKINGDIR/yarn-env.sh"
 
-echo "DataNode+NodeManager configuration is done!\nPlease manually configure the Hadoop daemons as explained in the Hadoop docs : https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/ClusterSetup.html#Configuring_the_Hadoop_Daemons "
+echo -e "DataNode+NodeManager configuration is done!\nPlease manually configure the Hadoop daemons as explained in the Hadoop docs : https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/ClusterSetup.html#Configuring_the_Hadoop_Daemons "
