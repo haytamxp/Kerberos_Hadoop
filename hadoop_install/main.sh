@@ -19,12 +19,12 @@ read mode
 case mode in 
   1)
     echo "Installing for MasterNode..."
-    sh hadoop_install.sh && sh nn_rm_config.sh
+    sh hadoopusr_setup.sh && sh hadoop_install.sh && sh nn_rm_config.sh
     ;;
 
   2)
     echo "Installing for DataNode..."
-    sh hadoop_install.sh && sh dn_nm_config.sh
+    sh hadoopusr_setup.sh && sh hadoop_install.sh && sh dn_nm_config.sh
     ;;
   
 esac

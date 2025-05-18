@@ -1,4 +1,19 @@
 #!/bin/bash
+# AUTHOR : GRAOUI ABDERRAHMANE
+
+# Check if hadoopadmin user already exists
+
+if id hadoopadmin >/dev/null 2>&1; then
+  echo "hadoopadmin already exists, aborting..."
+  exit
+fi
+
+# Only run this script if root
+if [ "$(id -u)" != "0" ]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
+
 
 # 0. Source sshpubkey
 

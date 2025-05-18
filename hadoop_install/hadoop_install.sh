@@ -1,6 +1,6 @@
 #!/bin/bash
 # AUTHOR : GRAOUI ABDERRAHMANE
-# User named hadoopadmin created via the hadoopusr_script.sh is expected to exist beforehand
+# User named hadoopadmin created via the hadoopusr_setup.sh is expected to exist beforehand
 
 
 # Source variables from .env file
