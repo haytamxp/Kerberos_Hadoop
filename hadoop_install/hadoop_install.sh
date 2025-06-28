@@ -81,6 +81,12 @@ export HADOOP_LOG_DIR=${HADOOP_HOME}/runtime/log
 export HADOOP_SBIN=${HADOOP_HOME}/sbin
 EOL
 
+# Setting up systemd service for the SSH Tunnel to Kerberos
+
+cp ./conf/krb-ssh-tunnel.service /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable --now krb-ssh-tunnel.service
+
 echo "Cleaning up..."
 chown hadoopadmin:hadoopadmin -R "$HADOOPUSRHOME/$INSTALLDIR/hadoop-3.4.1"
 rm $HADOOPUSRHOME/$INSTALLDIR/$HADOOPTAR
