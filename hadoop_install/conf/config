@@ -1,0 +1,11 @@
+Host mgvps
+        Hostname mergrweb.me
+        User ubuntu
+        IdentityFile /home/ubuntu/.ssh/mergrVPSssh
+
+Host kerberos krb
+  Hostname localhost
+  Port 2223
+  ProxyJump mgvps
+  User ubuntu
+  IdentityFile /home/ubuntu/.ssh/mergrVPSssh

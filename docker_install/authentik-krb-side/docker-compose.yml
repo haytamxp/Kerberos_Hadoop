@@ -9,7 +9,7 @@ services:
       retries: 5
       timeout: 5s
     volumes:
-      - /home/ubuntu/docker_appdata/authentik/postgresql/database:/var/lib/postgresql/data
+      - /home/ubuntu/appdata/authentik/postgresql/database:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: ${PG_PASS:?database password required}
       POSTGRES_USER: ${PG_USER:-authentik}
@@ -29,36 +29,10 @@ services:
       retries: 5
       timeout: 3s
     volumes:
-      - /home/ubuntu/docker_appdata/authentik/redis:/data
+      - /home/ubuntu/appdata/authentik/redis:/data
     ports:
       - "6379:6379"
-#  server:
-#    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2025.6.2}
-#    restart: unless-stopped
-#    command: server
-#    environment:
-#      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?secret key required}
-#      AUTHENTIK_REDIS__HOST: redis
-#      AUTHENTIK_POSTGRESQL__HOST: postgresql
-#      AUTHENTIK_POSTGRESQL__USER: ${PG_USER:-authentik}
-#      AUTHENTIK_POSTGRESQL__NAME: ${PG_DB:-authentik}
-#      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS}
-#      AUTHENTIK_REVERSE_PROXY_ADDRESSES: 127.0.0.1,10.0.0.0/8
-#      AK_OUTPOSTS__PROXY__HEADER_SET__HOST: true
-#      AK_OUTPOSTS__PROXY__HEADER_SET__X_FORWARDED_PROTO: true
-#    volumes:
-#      - /home/ubuntu/docker_appdata/authentik/media:/media
-#      - /home/ubuntu/docker_appdata/authentik/custom-templates:/templates
-#    env_file:
-#      - .env
-#    ports:
-#      - "${COMPOSE_PORT_HTTP:-9000}:9000"
-#      - "${COMPOSE_PORT_HTTPS:-9443}:9443"
-#    depends_on:
-#      postgresql:
-#        condition: service_healthy
-#      redis:
-#        condition: service_healthy
+
   worker:
     image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2025.6.2}
     restart: unless-stopped
@@ -79,9 +53,9 @@ services:
     user: root
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /home/ubuntu/docker_appdata/authentik/media:/media
-      - /home/ubuntu/docker_appdata/authentik/certs:/certs
-      - /home/ubuntu/docker_appdata/authentik/custom-templates:/templates
+      - /home/ubuntu/appdata/authentik/media:/media
+      - /home/ubuntu/appdata/authentik/certs:/certs
+      - /home/ubuntu/appdata/authentik/custom-templates:/templates
     env_file:
       - .env
     depends_on:
@@ -89,15 +63,6 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-
-#  krb-tunnel:
-##    user: "1001:1001"
-#    image: alpine-ssh
-#    container_name: krb-tunnel
-#    volumes:
- #     - /home/ubuntu/docker_composers/authentik/ssh:/home/hadoopadmin/.ssh:rw
- #   command: /home/hadoopadmin/.ssh/entrypoint-krb.sh
- #   restart: unless-stopped
 
 volumes:
   database:

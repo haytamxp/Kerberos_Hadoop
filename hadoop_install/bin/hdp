@@ -1,0 +1,54 @@
+#!/bin/bash
+set -euo pipefail
+
+if [ "$#" -ne 1 ]; then
+  echo "Usage: $0 {start|stop}"
+  exit 1
+fi
+
+ACTION=$1
+if [[ "$ACTION" != "start" && "$ACTION" != "stop" ]]; then
+  echo "Invalid argument: $ACTION"
+  echo "Usage: $0 {start|stop}"
+  exit 1
+fi
+
+# ssh -v aliases for nodes
+NAMENODE="namenode"
+DATANODES=("dn1" "dn2")
+
+if [ "$ACTION" == "start" ]; then
+  echo "Authenticating hdfs on $NAMENODE..."
+  ssh -v "$NAMENODE" "sudo -u hdfs kinit -k -t /etc/krb5.keytab hdfs/hdfs-nn.mergrweb.me@KRB.MERGRWEB.ME"
+
+  echo "Starting NameNode daemon on $NAMENODE..."
+  ssh -v "$NAMENODE" "sudo -u hdfs ${HADOOP_HOME}/bin/hdfs --daemon --debug start namenode"
+
+  echo "Authenticating hdfs on datanodes..."
+  ssh -v "dn1" "sudo -u hdfs kinit -k -t /etc/krb5.keytab hdfs/hdfs-dn1.mergrweb.me@KRB.MERGRWEB.ME"
+  ssh -v "dn2" "sudo -u hdfs kinit -k -t /etc/krb5.keytab hdfs/hdfs-dn2.mergrweb.me@KRB.MERGRWEB.ME"
+
+  echo "Starting DataNode daemons on datanodes..."
+  for dn in "${DATANODES[@]}"; do
+    echo "Starting DataNode on $dn..."
+    ssh -v "$dn" "sudo -u hdfs ${HADOOP_HOME}/bin/hdfs --daemon --debug start datanode"
+  done
+
+  echo "Authenticating yarn on $NAMENODE..."
+  ssh -v "$NAMENODE" "sudo -u yarn kinit -k -t /etc/krb5.keytab yarn/hdfs-nn.mergrweb.me@KRB.MERGRWEB.ME"
+
+  echo "Starting ResourceManager on $NAMENODE..."
+  ssh -v "$NAMENODE" "sudo -u yarn ${HADOOP_HOME}/bin/yarn --daemon --debug start resourcemanager"
+
+  echo "Authenticating yarn on datanodes..."
+  ssh -v "dn1" "sudo -u yarn kinit -k -t /etc/krb5.keytab yarn/hdfs-dn1.mergrweb.me@KRB.MERGRWEB.ME"
+  ssh -v "dn2" "sudo -u yarn kinit -k -t /etc/krb5.keytab yarn/hdfs-dn2.mergrweb.me@KRB.MERGRWEB.ME"
+
+  echo "Starting NodeManagers on datanodes..."
+  for dn in "${DATANODES[@]}"; do
+    echo "Starting NodeManager on $dn..."
+    ssh -v "$dn" "sudo -u yarn ${HADOOP_HOME}/bin/yarn --daemon --debug start nodemanager"
+  done
+
+  echo "Hadoop startup sequence completed."
+fi

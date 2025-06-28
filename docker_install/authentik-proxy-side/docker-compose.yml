@@ -1,0 +1,129 @@
+services:
+  swag:
+    image: lscr.io/linuxserver/swag:latest
+    container_name: swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - DOCKER_MODS= linuxserver/mods:swag-auto-reload|linuxserver/mods:swag-dbip
+      - TZ=<UTC TIMEZONE OF SERVER>
+      - URL=${URL}
+      - VALIDATION=${VALIDATION}
+      - SUBDOMAINS=www,authentik,hdfs-nn,hdfs-dn1,hdfs-dn2,krb,ambari,ldap,hue #optional
+      - CERTPROVIDER= #optional
+      - DNSPLUGIN= #optional
+      - PROPAGATION= #optional
+      - EMAIL=<EMAIL_FOR_LETSENCRYPT>  #optional
+      - ONLY_SUBDOMAINS=false #optional
+      - EXTRA_DOMAINS= #optional
+      - STAGING=false #optional
+    volumes:
+      - /home/ubuntu/appdata/swag/config:/config
+    ports:
+      - 443:443
+      - 80:80 #optional
+    restart: unless-stopped
+
+
+    ## FOLLOW AUTHENTIK DOCS DOCKER COMPOSE INSTALL
+    ## SET SECRETS VIA COMMANDS :
+    ## echo "PG_PASS=$(openssl rand -base64 36 | tr -d '\n')" >> .env
+    ## echo "AUTHENTIK_SECRET_KEY=$(openssl rand -base64 60 | tr -d '\n')" >> .env
+  authentik:
+    user: "1001:1001" # SAME as owner of mapped volumes on HOST, Numeric format ONLY
+    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2025.6.2}
+    restart: unless-stopped
+    container_name: authentik-server
+    command: server
+    environment:
+      KRB5_TRACE: /dev/stderr
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?secret key required}
+      AUTHENTIK_REDIS__HOST: krb-tunnel
+      AUTHENTIK_POSTGRESQL__HOST: krb-tunnel
+      AUTHENTIK_POSTGRESQL__USER: ${PG_USER:-authentik}
+      AUTHENTIK_POSTGRESQL__NAME: ${PG_DB:-authentik}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS}
+      AUTHENTIK_REVERSE_PROXY_ADDRESSES: 0.0.0.0
+      AK_OUTPOSTS__PROXY__HEADER_SET__HOST: true
+      AK_OUTPOSTS__PROXY__HEADER_SET__X_FORWARDED_PROTO: true
+    volumes:
+      - /home/ubuntu/appdata/authentik/media:/media
+      - /home/ubuntu/appdata/authentik/custom-templates:/templates
+    env_file:
+      - .env
+    ports:
+      - "${COMPOSE_PORT_HTTP:-9000}:9000"
+      - "${COMPOSE_PORT_HTTPS:-9443}:9443"
+
+  nn-tunnel:
+    user: "1001:1001"
+    image: alpine-ssh
+    container_name: nn-tunnel
+    volumes:
+      - /home/ubuntu/composers/webauth/ssh:/home/hadoopadmin/.ssh:rw
+    command: /home/hadoopadmin/.ssh/entrypoint-nn.sh
+    restart: unless-stopped
+    ports:
+      - "9005:9005"
+      - "9870:9870"
+      - "9871:9871"
+      - "9868:9868"
+      - "9869:9869"
+      - "8032:8032"
+      - "8030:8030"
+      - "8088:8088"
+      - "8090:8090"
+      - "8031:8031"
+      - "8033:8033"
+      - "8444:8444"
+      - "8440:8440"
+      - "8441:8441"
+
+  dn1-tunnel:
+    user: "1001:1001"
+    image: alpine-ssh
+    container_name: dn1-tunnel
+    volumes:
+      - /home/ubuntu/composers/webauth/ssh:/home/hadoopadmin/.ssh:rw
+    command: /home/hadoopadmin/.ssh/entrypoint-dn1.sh
+    restart: unless-stopped
+    ports:
+      - "50070:50070"
+      - "9864:9864"
+      - "9865:9865"
+      - "9866:9866"
+      - "9867:9867"
+      - "8043:8042"
+      - "8045:8044"
+
+  dn2-tunnel:
+    user: "1001:1001"
+    image: alpine-ssh
+    container_name: dn2-tunnel
+    volumes:
+      - /home/ubuntu/composers/webauth/ssh:/home/hadoopadmin/.ssh:rw
+    command: /home/hadoopadmin/.ssh/entrypoint-dn2.sh
+    restart: unless-stopped
+    ports:
+      - "50072:50072"
+      - "9884:9884"
+      - "9885:9885"
+      - "9886:9886"
+      - "9887:9887"
+      - "8062:8042"
+      - "8064:8044"
+
+  krb-tunnel:
+    user: "1001:1001"
+    image: alpine-ssh
+    container_name: krb-tunnel
+    volumes:
+      - /home/ubuntu/composers/webauth/ssh:/home/hadoopadmin/.ssh:rw
+    command: /home/hadoopadmin/.ssh/entrypoint-krb.sh
+    restart: unless-stopped
+    ports:
+      - "88:88"
+      - "389:389"
+      - "750:750"
+      - "5432:5432"
+      - "6379:6379"

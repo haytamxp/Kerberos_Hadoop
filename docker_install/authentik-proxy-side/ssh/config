@@ -1,0 +1,33 @@
+Host macevps
+        Hostname tf.mergrweb.me
+        User ubuntu
+        IdentityFile /home/hadoopadmin/.ssh/macevps
+
+Host mgvps
+        Hostname mergrweb.me
+        User ubuntu
+        IdentityFile /home/hadoopadmin/.ssh/mgvps
+
+Host namenode
+        Hostname localhost
+        Port 2225
+        ProxyJump macevps
+        User hadoopadmin
+        IdentityFile /home/hadoopadmin/.ssh/hadoop
+
+Host dn1
+  Hostname hdfs-dn1.mergrweb.me
+  User hadoopadmin
+  IdentityFile /home/hadoopadmin/.ssh/hadoop
+
+Host dn2
+  Hostname hdfs-dn2.mergrweb.me
+  User hadoopadmin
+  IdentityFile /home/hadoopadmin/.ssh/hadoop
+
+Host krb
+        Hostname localhost
+        Port 2223
+        ProxyJump mgvps
+        User ubuntu
+        IdentityFile /home/hadoopadmin/.ssh/mgvps

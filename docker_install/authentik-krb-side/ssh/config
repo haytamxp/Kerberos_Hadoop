@@ -1,0 +1,4 @@
+Host krb
+        Hostname 10.101.100.92
+        User ubuntu
+        IdentityFile /home/hadoopadmin/.ssh/krbsshkey

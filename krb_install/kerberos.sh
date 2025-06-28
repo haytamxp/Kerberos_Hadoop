@@ -12,9 +12,26 @@ if ! dpkg -l krb5-kdc krb5-admin-server krb5-kdc-ldap >/dev/null 2>&1 ; then
 	apt install krb5-kdc krb5-admin-server krb5-kdc-ldap -y || echo "Installation failed" && exit -1
 fi
 
-cp conf/krb/krb5.conf /etc/
-cp conf/krb/krb5.keytab /etc/
-cp conf/krb/krb5kdc/ /etc/krb5kdc
-chmod 644 krb5.conf
-chmod 600 krb5.keytab
-chown root:root krb5.conf krb5.keytab -R /etc/krb5kdc
+lan_ip=${hostname -I | cut -d ' ' -f 1}
+
+cat << EOF >> /etc/hosts
+# Kerberos domains
+$lan_ip krb.mergrweb.me
+EOF
+
+krb5_newrealm
+
+bash create_princs.sh
+
+bash add_keytabs.sh
+
+KRB_DEFAULT_REALM = ${cat /etc/krb5.conf | grep default_realm | tr -s ' ' | cut -d ' ' -f 4}
+echo "=============================================================="
+echo " /!\ ADDING FULL PRIVILEGES TO */ADMIN@$KRB_DEFAULT_REALM"
+echo "=============================================================="
+echo "*/admin@$KRB_DEFAULT_REALM  *" >> /etc/krb5kdc/kadm5.acl
+
+
+echo "$KRB_DEFAULT_REALM" > .currentkrbdefaultrealm
+
+
