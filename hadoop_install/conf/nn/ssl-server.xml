@@ -1,0 +1,11 @@
+<configuration>
+  <property>
+    <name>ssl.server.truststore.location</name>
+    <value>/home/hadoopadmin/hadoopinstall/hadoop/etc/hadoop/truststore.jks</value>
+  </property>
+
+  <property>
+    <name>ssl.server.truststore.password</name>
+    <value>jceks://file/home/hadoopadmin/hadoopinstall/hadoop/etc/hadoop/sslpass.jceks</value>
+  </property>
+</configuration>

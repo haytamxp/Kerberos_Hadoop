@@ -52,34 +52,40 @@ fi
 
 # Extract Hadoop
 echo "Extracting Hadoop..."
-if [ ! -d "./hadoop-3.4.1" ]; then
+if [ ! -d "./hadoop*" ]; then
 	tar -xvf "$HADOOPTAR"
 fi
+
+
 
 cd "hadoop-3.4.1"
 
 echo "Setting up safe process and log directories..."
 mkdir -p runtime/proc runtime/log
-find runtime -type d -exec chmod 600 {} \;
-chmod 600 runtime
+find runtime -type d -exec chmod 660 {} \;
+chmod 660 runtime
 
 
 # Add dir to PATH
 
 echo "Adding directory to PATH..."
 cat >> $HADOOPUSRHOME/.bashrc << EOL
-if ! [[ "$PATH" =~ "$HADOOPUSRHOME/$INSTALLDIR/hadoop-3.4.1/bin:" ]]; then
-    PATH="$HADOOPUSRHOME/$INSTALLDIR/hadoop-3.4.1/bin:$PATH"
+if ! [[ "$PATH" =~ "$HADOOPUSRHOME/$INSTALLDIR/hadoop/bin:" ]]; then
+    PATH="$HADOOPUSRHOME/$INSTALLDIR/hadoop/bin:$PATH"
 fi
 export PATH
+export HADOOP_HOME=/home/hadoopadmin/hadoopinstall/hadoop
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export HADOOP_PID_DIR=${HADOOP_HOME}/runtime/proc
+export HADOOP_LOG_DIR=${HADOOP_HOME}/runtime/log
+export HADOOP_SBIN=${HADOOP_HOME}/sbin
 EOL
-
-echo "Adding JAVA_HOME to hadoop-env.sh..."
-echo 'export JAVA_HOME=/usr/java/latest' >> "$HADOOPUSRHOME/$INSTALLDIR/hadoop-3.4.1/etc/hadoop/hadoop-env.sh"
 
 echo "Cleaning up..."
 chown hadoopadmin:hadoopadmin -R "$HADOOPUSRHOME/$INSTALLDIR/hadoop-3.4.1"
-rm -f "$HADOOPUSRHOME/$INSTALLDIR/hadoop-3.4.1.tar.*"
+rm $HADOOPUSRHOME/$INSTALLDIR/$HADOOPTAR
+rm $HADOOPUSRHOME/$INSTALLDIR/$SHA512
+mv "hadoop-3.4.1" "hadoop"
 
 echo "Installation has finished successfully!"
 exit 0

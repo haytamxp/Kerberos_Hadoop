@@ -6,16 +6,11 @@
 # Source from .env file
 source .env
 
-WORKINGDIR="$HADOOPUSRHOME/$INSTALLDIR/hadoop-3.4.1/etc/hadoop"
+WORKINGDIR="$HADOOPUSRHOME/$INSTALLDIR/hadoop/etc/hadoop"
 
 echo "Configuring NameNode..."
 
-cat << EOF >> "$WORKINGDIR/hadoop-env.sh"
-export HDFS_NAMENODE_OPTS="-XX:+UseParallelGC -Xmx2g"
-export HADOOP_PID_DIR=$HADOOPUSRHOME/$INSTALLDIR/runtime/proc
-export HADOOP_LOG_DIR=$HADOOPUSRHOME/$INSTALLDIR/runtime/log
-EOF
-echo "Configuring ResourceManager..."
-echo 'export YARN_RESOURCEMANAGER_OPTS="-Xmx512m"' >> "$WORKINGDIR/yarn-env.sh"
+$NN = $NN_CONFIGS/*
+cp -f $NN $WORKINGDIR
 
-echo -e "NameNode+ResourceManager configuration is done!\nPlease manually configure the Hadoop daemons as explained in the Hadoop docs : https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/ClusterSetup.html#Configuring_the_Hadoop_Daemons "
+echo -e "NameNode+ResourceManager configuration is done! Make sure you have a working Kerberos and OpenLDAP server\nIn case of issues please verify the configuration as explained in the Hadoop docs : https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/ClusterSetup.html#Configuring_the_Hadoop_Daemons  "
