@@ -21,7 +21,7 @@
 		<name>fs.default.name</name>
 		<value>hdfs://hdfs-nn.mergrweb.me:9005</value>
 	</property>
-<!--	<property>
+	<property>
   		<name>hadoop.security.authentication</name>
   		<value>kerberos</value>
 	</property>
@@ -30,5 +30,4 @@
   		<name>hadoop.security.authorization</name>
   		<value>true</value>
 	</property>
--->
 </configuration>
