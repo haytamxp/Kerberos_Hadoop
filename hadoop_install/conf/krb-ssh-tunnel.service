@@ -1,0 +1,15 @@
+[Unit]
+Description=Kerberos SSH Tunnel to KDC
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=ssh -N -T \
+  -L 6288:localhost:88 \
+  -L 6464:localhost:464 \
+  krb
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
