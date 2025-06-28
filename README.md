@@ -1,29 +1,37 @@
-# Hadoop Cluster + Kerberos Authentication Server
+<p align="center">
+  <img src="./assets/hadoopkrbtransparent.png" height="250">
+</p>
 
-<img src="./assets/hadoopkrbtransparent.png" height="100">
+# Hadoop Cluster + Kerberos Authentication Server
 
 End-2-End SSL encrypted Hadoop Cluster with KRB5 + OpenLDAP backend, featuring a NGINX Docker powered web server
 
-**:fa-exclamation-triangle: *These scripts assume that you are running on :fa-linux: Ubuntu/Debian !* **
+**⚠️⚠️ *These scripts assume that you are running on 🐧 Ubuntu/Debian !* ⚠️⚠️**
 
 **Table of Contents**
 
-[TOCM]
+- [Hadoop Cluster + Kerberos Authentication Server](#hadoop-cluster---kerberos-authentication-server)
+- [Features](#features)
+- [Preparation](#preparation)
+- [Installation](#installation)
+- [How it works & User Guide](#how-it-works---user-guide)
+    + [Communications](#communications)
+    + [Hadoop](#hadoop)
+    + [Kerberos & OpenLDAP](#kerberos---openldap)
+    + [NGINX and Authentik](#nginx-and-authentik)
 
-[TOC]
-
-#Features
+# Features
 - Distributed minimal 3-node Hadoop Cluster configuration
 - UNIX user mapping to hadoop services
 - Kerberos 5 with OpenLDAP backend
 - NGINX based web server featuring fail2ban and certbot with Authentik for Kerberos SPNEGO authentication
 
-#Preparation
+# Preparation
 Please make sure you have set up OpenSSH on all your machines for key-based and GSSAPI authentification and you have generated SSH keys for all your machines
 
 You are expected to create your ~/.ssh/config appropriately and listed the correct public keys to each machine's respective authorized_keys file
 
-#Installation
+# Installation
 Simply clone this repository in all the machines you intend to setup :
 ```bash
 git clone https://github.com/haytamxp/kerberos_hadook.git
@@ -39,7 +47,7 @@ and select which part of the cluster software would you want to install and dedi
 
 After installation please finish configuration of your NGINX subfolders/subdomains and link Authentik with Kerberos as shown in Authentik Docs
 
-#How it works & User Guide
+# How it works & User Guide
 
 This script sets up a 5 node system that features :
 - 1 Dedicated Namenode
