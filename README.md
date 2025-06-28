@@ -34,7 +34,7 @@ You are expected to create your ~/.ssh/config appropriately and listed the corre
 # Installation
 Simply clone this repository in all the machines you intend to setup :
 ```bash
-git clone https://github.com/haytamxp/kerberos_hadook.git
+git clone https://github.com/haytamxp/Kerberos_Hadoop.git
 ```
 > **RECOMMENDED TO VERIFY THE CONFIGURATIONS BEFORE RUNNING THE MAIN SCRIPT**
 
